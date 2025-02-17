@@ -1,6 +1,6 @@
 import io
 import json
-from s3_handler import read_csv_from_s3
+from .s3_handler import read_csv_from_s3
 
 def obfuscate_csv_from_json(json_string):
     """
