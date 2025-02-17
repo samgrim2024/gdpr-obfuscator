@@ -1,16 +1,35 @@
 import pandas as pd
+import io
+import json
+import boto3
 
-def obfuscate_pii(df, pii_fields):
+def obfuscate_csv_from_json(json_string):
     """
-    Obfuscates specified PII fields in a Pandas DataFrame.
+    Takes a JSON string, reads a CSV file from S3, obfuscates specified PII fields, and returns a byte-stream.
+    
+    :param json_string: JSON string containing S3 file location and fields to obfuscate.
+    :return: Byte-stream of the obfuscated CSV file.
     """
-    if not isinstance(df, pd.DataFrame):
-        raise ValueError("Input data must be a Pandas DataFrame.")
-
+    input_data = json.loads(json_string)
+    s3_location = input_data["file_to_obfuscate"]
+    pii_fields = input_data["pii_fields"]
+    
+    # Extract bucket and key from S3 location
+    bucket, key = s3_location.replace("s3://", "").split("/", 1)
+    
+    # Read the CSV file from S3
+    s3_client = boto3.client("s3")
+    response = s3_client.get_object(Bucket=bucket, Key=key)
+    df = pd.read_csv(response["Body"])
+    
+    # Obfuscate specified fields
     for field in pii_fields:
         if field in df.columns:
-            df[field] = "***" 
-        else:
-            print(f"Warning: Column '{field}' not found in the DataFrame.")
-
-    return df
+            df[field] = '***'
+    
+    # Convert DataFrame back to CSV in a byte-stream
+    output = io.StringIO()
+    df.to_csv(output, index=False)
+    
+    # Return byte-stream
+    return output.getvalue().encode()
