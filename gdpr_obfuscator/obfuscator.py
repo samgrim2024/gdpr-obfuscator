@@ -1,7 +1,6 @@
-import pandas as pd
 import io
 import json
-import boto3
+from s3_handler import read_csv_from_s3
 
 def obfuscate_csv_from_json(json_string):
     """
@@ -18,9 +17,7 @@ def obfuscate_csv_from_json(json_string):
     bucket, key = s3_location.replace("s3://", "").split("/", 1)
     
     # Read the CSV file from S3
-    s3_client = boto3.client("s3")
-    response = s3_client.get_object(Bucket=bucket, Key=key)
-    df = pd.read_csv(response["Body"])
+    df = read_csv_from_s3(bucket, key)
     
     # Obfuscate specified fields
     for field in pii_fields:
