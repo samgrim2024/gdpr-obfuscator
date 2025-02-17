@@ -1,6 +1,5 @@
 import boto3
 import pandas as pd
-from io import StringIO
 
 def read_csv_from_s3(bucket_name, file_key):
     """
@@ -9,13 +8,8 @@ def read_csv_from_s3(bucket_name, file_key):
     """
     s3 = boto3.client('s3')
     
-    try:
-        response = s3.get_object(Bucket=bucket_name, Key=file_key)
-        csv_content = response['Body'].read().decode('utf-8')
+    response = s3.get_object(Bucket=bucket_name, Key=file_key)
+    csv_file = response['Body']
 
-        df = pd.read_csv(StringIO(csv_content))
-        return df
-    
-    except Exception as e:
-        print(f"Error reading CSV from S3: {e}")
-        return None
+    df = pd.read_csv(csv_file)
+    return df
