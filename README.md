@@ -51,16 +51,38 @@ from gdpr_obfuscator import obfuscate_json_from_json
 
 # JSON string containing S3 file location and fields to obfuscate
 json_string = json.dumps({
-    "file_to_obfuscate": "s3://your-bucket-name/path/to/your-file.csv",
+    "file_to_obfuscate": "s3://your-bucket-name/path/to/your-file.json",
     "pii_fields": ["name", "email"]
 })
 
-# Obfuscate the CSV file
+# Obfuscate the JSON file
 obfuscated_json = obfuscate_json_from_json(json_string)
 
-# Save the obfuscated CSV to a file
+# Save the obfuscated JSON to a file
 with open("obfuscated_file.json", "wb") as f:
     f.write(obfuscated_json)
+```
+
+### Obfuscate Parquet from S3
+
+To obfuscate a Parquet file stored in S3, user the `obfuscate_parquet_from_json` function. Below is an example:
+
+```python
+import json
+from gdpr_obfuscator import obfuscate_parquet_from_json
+
+# JSON string containing S3 file location and fields to obfuscate
+json_string = json.dumps({
+    "file_to_obfuscate": "s3://your-bucket-name/path/to/your-file.parquet",
+    "pii_fields": ["name", "email"]
+})
+
+# Obfuscate the Parquet file
+obfuscated_parquet = obfuscate_parquet_from_json(json_string)
+
+# Save the obfuscated Parquet to a file
+with open("obfuscated_file.parquet", "wb") as f:
+    f.write(obfuscated_parquet)
 ```
 
 ## License
