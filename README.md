@@ -41,6 +41,28 @@ with open("obfuscated_file.csv", "wb") as f:
     f.write(obfuscated_csv)
 ```
 
+### Obfuscate JSON from S3
+
+To obfuscate a JSON file stored in S3, user the `obfuscate_json_from_json` function. Below is an example:
+
+```python
+import json
+from gdpr_obfuscator import obfuscate_json_from_json
+
+# JSON string containing S3 file location and fields to obfuscate
+json_string = json.dumps({
+    "file_to_obfuscate": "s3://your-bucket-name/path/to/your-file.csv",
+    "pii_fields": ["name", "email"]
+})
+
+# Obfuscate the CSV file
+obfuscated_json = obfuscate_json_from_json(json_string)
+
+# Save the obfuscated CSV to a file
+with open("obfuscated_file.json", "wb") as f:
+    f.write(obfuscated_json)
+```
+
 ## License
 
 This project is licensed under the MIT License.
