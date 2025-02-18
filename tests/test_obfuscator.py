@@ -1,9 +1,11 @@
-import pytest
 from unittest.mock import patch
 import json
 import pandas as pd
 from gdpr_obfuscator import obfuscate_csv_from_json
 from gdpr_obfuscator import obfuscate_json_from_json
+import io
+
+from gdpr_obfuscator import obfuscate_parquet_from_json
 
 
 @patch("gdpr_obfuscator.obfuscator.read_csv_from_s3")
@@ -100,3 +102,51 @@ def test_obfuscate_json_with_no_pii_fields(mock_read_json):
 
     # Verify that the mock was called correctly
     mock_read_json.assert_called_once_with("bucket", "key.json")
+
+
+@patch("gdpr_obfuscator.obfuscator.read_parquet_from_s3")
+def test_obfuscate_parquet_from_json(mock_read_parquet):
+    # Create mock DataFrame
+    mock_df = pd.DataFrame(
+        {"name": ["John"], "email": ["john@example.com"], "age": [30]}
+    )
+    mock_read_parquet.return_value = mock_df
+
+    # JSON input
+    json_input = json.dumps(
+        {"file_to_obfuscate": "s3://bucket/key.json", "pii_fields": ["name", "email"]}
+    )
+
+    parquet_file = io.BytesIO()
+    expected_df = pd.DataFrame({"name": ["***"], "email": ["***"], "age": [30]})
+    expected_df.to_parquet(parquet_file, index=False)
+    expected_output = parquet_file.getvalue()
+
+    # Call the function
+    result = obfuscate_parquet_from_json(json_input)
+    assert result == expected_output
+
+
+@patch("gdpr_obfuscator.obfuscator.read_parquet_from_s3")
+def test_obfuscate_parquet_with_no_pii_fields(mock_read_parquet):
+    # Create mock DataFrame
+    mock_df = pd.DataFrame(
+        {"name": ["John"], "email": ["john@example.com"], "age": [30]}
+    )
+    mock_read_parquet.return_value = mock_df
+
+    # JSON input
+    json_input = json.dumps(
+        {"file_to_obfuscate": "s3://bucket/key.json", "pii_fields": []}
+    )
+
+    parquet_file = io.BytesIO()
+    expected_df = pd.DataFrame(
+        {"name": ["John"], "email": ["john@example.com"], "age": [30]}
+    )
+    expected_df.to_parquet(parquet_file, index=False)
+    expected_output = parquet_file.getvalue()
+
+    # Call the function
+    result = obfuscate_parquet_from_json(json_input)
+    assert result == expected_output
