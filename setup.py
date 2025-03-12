@@ -6,6 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pandas",
+        "pyarrow",
         "boto3"
     ],
     description="A package to obfuscate PII data in CSV files stored in S3.",
