@@ -4,17 +4,65 @@ A package to obfuscate PII data in CSV files stored in S3.
 
 ## Installation
 
-To install the package, use the following command:
+### For Development:
 
+Clone the repository:
+```sh
+git clone https://github.com/samgrim2024/gdpr-obfuscator.git
+```
+
+Change directory to the cloned repository:
+```sh
+cd gdpr-obfuscator
+```
+
+It's best practice to install the package in a virtual environment:
+```sh
+python3 -m venv venv
+```
+Activate the virtual environment:
+- On macos/linux:
+```sh
+source venv/bin/activate
+```
+
+Install the requirements:
+```sh
+pip install -r requirements.txt
+```
+
+To run the tests, you have to set the `PYTHONPATH` environment variable to the current directory so that the package can be found:
+```sh
+export PYTHONPATH=$(pwd)
+pytest tests/
+```
+
+### For Production:
+
+You can install the package using pip:
+
+#### Install directly from the repository:
+```sh
+pip install git+https://github.com/samgrim2024/gdpr-obfuscator.git
+```
+
+#### Install from a local clone:
+Navigate to the cloned repository and run:
 ```sh
 pip install .
 ```
 
+For development, you can install the package in editable mode:
+```sh
+pip install -e .
+```
+
 ## Requirements
 
-The package requires the following dependencies:
+The package will automatically install the required dependencies:
 
 - pandas
+- pyarrow (for parquet support)
 - boto3
 
 ## Usage
