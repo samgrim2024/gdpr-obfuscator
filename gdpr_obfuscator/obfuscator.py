@@ -64,6 +64,12 @@ def obfuscate_json_from_json(json_string):
 
 
 def obfuscate_parquet_from_json(json_string):
+    """
+    Takes a JSON string, reads a Parquet file from S3, obfuscates specified PII fields, and returns a byte-stream.
+
+    :param json_string: JSON string containing S3 file location and fields to obfuscate.
+    :return: Byte-stream of the obfuscated Parquet file.
+    """
     input_data = json.loads(json_string)
     s3_location = input_data["file_to_obfuscate"]
     pii_fields = input_data["pii_fields"]
